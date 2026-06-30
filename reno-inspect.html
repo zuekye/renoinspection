@@ -167,6 +167,35 @@
   .empty{text-align:center; padding:50px 24px; color:var(--sub);}
   .empty .ic{font-size:34px; margin-bottom:10px;}
 
+  /* ---- PC（広い画面）レイアウト ---- */
+  .desktop-only{display:none !important;}
+  @media (min-width:900px){
+    .app{display:flex; flex-direction:column; max-width:1120px; padding-bottom:32px;}
+    .topbar{order:1;}
+    .hazard{order:2;}
+    .nav{order:3; position:static; bottom:auto; border-top:none; border-bottom:1px solid var(--line); padding-bottom:0; background:#fff;}
+    .nav .navwrap{justify-content:center; gap:6px;}
+    .nav button{flex:0 0 auto; flex-direction:row; gap:8px; padding:13px 22px; font-size:14px; border-bottom:2px solid transparent;}
+    .nav button.on{border-bottom-color:var(--accent);}
+    .nav svg{width:18px; height:18px;}
+    .content{order:4;}
+    .print-area{order:5;}
+    .desktop-only{display:inline-flex !important;}
+    .mobile-only{display:none !important;}
+
+    /* 一覧はカードをグリッド表示 */
+    .insp-list{display:grid; grid-template-columns:repeat(auto-fill,minmax(330px,1fr)); gap:14px; align-items:start;}
+    /* フォーム・チェックリストは読みやすい幅で中央寄せ */
+    .summary{margin-top:20px;}
+    .dhead,.exrow,.cat,.pad{max-width:780px; margin-left:auto; margin-right:auto;}
+    .dhead{margin-top:20px;}
+  }
+  @media (hover:hover) and (min-width:900px){
+    .prop,.insp{transition:border-color .12s, box-shadow .12s;}
+    .prop:hover,.insp:hover{border-color:var(--accent-2); box-shadow:0 2px 4px rgba(20,28,36,.08), 0 8px 22px rgba(20,28,36,.10);}
+    .btn-ghost:hover{background:var(--surface-2);}
+  }
+
   .print-area{display:none;}
   @media print{
     @page{margin:14mm;}
@@ -330,7 +359,7 @@ function App(){
     </div></div>
     <div className="hazard screen"></div>
 
-    <div className="screen">
+    <div className="screen content">
       {view.name==="dash" && <Dashboard properties={properties}
         open={p=>setView({name:"property",propId:p.id})}
         onAdd={p=>{setProperties(l=>[p,...l]); setView({name:"property",propId:p.id});}}
@@ -391,7 +420,10 @@ function Dashboard({properties,open,onAdd,onExportAll}){
     </div></div>
 
     <div className="sec-head"><h2>物件一覧</h2>
-      <button className="btn btn-ghost btn-sm" onClick={onExportAll}><Ico.xls/>一覧をExcel</button></div>
+      <div className="row">
+        <button className="btn btn-ghost btn-sm" onClick={onExportAll}><Ico.xls/>一覧をExcel</button>
+        <button className="btn btn-primary btn-sm desktop-only" onClick={()=>setShowNew(true)}><Ico.plus/>物件を追加</button>
+      </div></div>
 
     <div className="toolbar">
       <div className="search"><Ico.search/><input placeholder="物件名で検索" value={q} onChange={e=>setQ(e.target.value)}/></div>
@@ -422,7 +454,7 @@ function Dashboard({properties,open,onAdd,onExportAll}){
       })}
     </div>
 
-    <button className="fab screen" onClick={()=>setShowNew(true)}><Ico.plus/>物件を追加</button>
+    <button className="fab screen mobile-only" onClick={()=>setShowNew(true)}><Ico.plus/>物件を追加</button>
     {showNew && <NewProperty onClose={()=>setShowNew(false)} onCreate={p=>{onAdd(p); setShowNew(false);}} />}
   </>;
 }
